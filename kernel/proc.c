@@ -688,3 +688,15 @@ procdump(void)
     printf("\n");
   }
 }
+
+uint64 nproc(void) {
+    struct proc *p;
+    uint64 n = 0;
+    // sum the proc used;
+    for(p = proc; p<&proc[NPROC]; p++) {
+        if(p->state == UNUSED)
+            continue;
+        n++;
+    }
+    return n;
+}
