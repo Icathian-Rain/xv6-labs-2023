@@ -1,0 +1,10 @@
+usertrap
+
+0x10
+
+0x22
+
+a3
+
+
+initcode 1
