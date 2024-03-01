@@ -104,4 +104,8 @@ struct proc {
   struct file *ofile[NOFILE];  // Open files
   struct inode *cwd;           // Current directory
   char name[16];               // Process name (debugging)
+#ifdef LAB_PGTBL
+    //   添加一个属性,用于存储syscall的信息
+    struct usyscall* usys_call;
+#endif
 };
