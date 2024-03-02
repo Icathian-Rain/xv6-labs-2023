@@ -449,3 +449,37 @@ copyinstr(pagetable_t pagetable, char *dst, uint64 srcva, uint64 max)
     return -1;
   }
 }
+
+
+void walk_print(pagetable_t pagetable, int level) {
+    // there are 2^9 = 512 PTEs in a page table.
+    for(int i = 0; i < 512; i++){
+        pte_t pte = pagetable[i];
+        // test if the pte exit
+        if((pte & PTE_V) && (pte & (PTE_R|PTE_W|PTE_X)) == 0){
+        // this PTE points to a lower-level page table.
+            uint64 child = PTE2PA(pte);
+            // print the node
+            for(int j = 0; j<=level; j++) {
+                printf("..");
+            }
+            printf("%d: pte %p pa %p\n", i, pte, child);
+            walk_print((pagetable_t)child, level + 1);
+        } else if (pte & PTE_V) {
+            uint64 child = PTE2PA(pte);
+            // print the leaf
+            for(int j = 0; j<=level; j++) {
+                printf("..");
+            }
+            printf("%d: pte %p pa %p\n", i, pte, child);
+        }
+    }
+}
+
+
+void vmprint(pagetable_t t){
+    // first line
+    printf("page table %p\n", t);
+    // walk
+    walk_print(t, 0);
+}
