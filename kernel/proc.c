@@ -132,14 +132,6 @@ found:
     return 0;
   }
 
-  // An empty user page table.
-  p->pagetable = proc_pagetable(p);
-  if(p->pagetable == 0){
-    freeproc(p);
-    release(&p->lock);
-    return 0;
-  }
-
   #ifdef LAB_PGTBL
     // 分配物理内存
     if((p->usys_call = (struct usyscall *)kalloc()) == 0) {
@@ -149,6 +141,15 @@ found:
     }
     p->usys_call->pid = p->pid;
 #endif
+
+  // An empty user page table.
+  p->pagetable = proc_pagetable(p);
+  if(p->pagetable == 0){
+    freeproc(p);
+    release(&p->lock);
+    return 0;
+  }
+
   // Set up new context to start executing at forkret,
   // which returns to user space.
   memset(&p->context, 0, sizeof(p->context));
