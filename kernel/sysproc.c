@@ -75,6 +75,33 @@ int
 sys_pgaccess(void)
 {
   // lab pgtbl: your code here.
+    // para1: the starting virtual address
+    uint64 va;
+    // para2: the number of pages
+    int npages;
+    // para3: the address of the bitmask
+    uint64 abits;
+    argaddr(0, &va);
+    argint(1, &npages);
+    argaddr(2, &abits);
+    uint64 mask = 0;
+    if(npages > 32) {
+        return -1;
+    }
+
+    pagetable_t pagetable = myproc()->pagetable;
+    pte_t *pte = walk(pagetable, va, 0);
+    for (int i = 0; i < npages; i++) {
+        if ((pte[i] & PTE_A) && (pte[i] & PTE_V)) {
+            mask |= (1 << i);
+            pte[i] ^= PTE_A;
+        }
+    }
+    if (copyout(pagetable, abits, (char *)&mask, sizeof(mask)) < 0) {
+        return -1;
+    }
+
+
   return 0;
 }
 #endif
