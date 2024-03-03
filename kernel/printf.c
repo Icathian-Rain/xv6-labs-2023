@@ -123,6 +123,8 @@ panic(char *s)
   printf(s);
   printf("\n");
   panicked = 1; // freeze uart output from other CPUs
+//   call backtrace in case of panic
+  backtrace();
   for(;;)
     ;
 }
@@ -132,4 +134,28 @@ printfinit(void)
 {
   initlock(&pr.lock, "pr");
   pr.locking = 1;
+}
+
+// backtrace
+void 
+backtrace(void) 
+{
+    // fp: s0 register
+    // ra: return address
+    // top: top of the stack
+    // bottom: bottom of the stack
+    uint64 fp, ra, top, bottom;
+    printf("backtrace:\n");
+    fp = r_fp();
+    top = PGROUNDUP(fp);
+    bottom = PGROUNDDOWN(fp);
+    // if fp > bottom and fp < top, then print the return address
+    while (fp < top && fp > bottom)
+    {
+        // ra is the return address
+        ra = *(uint64 *)(fp-8);
+        printf("%p\n", ra);
+        // fp is the frame pointer
+        fp = *(uint64 *)(fp-16);
+    }
 }
