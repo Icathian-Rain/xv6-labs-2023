@@ -1,0 +1,4 @@
+a0, a1, a2, register a2 holds 13
+function f is 26, the g is 0x26, too
+0x642
+printf return address
